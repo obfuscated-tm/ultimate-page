@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personal dashboard with handy web utilities — GIF Spoofer & Secret Encoder.">
+    <title>obfuscated_'s Ultimate Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- ═══════════ HERO / ABOUT ME ═══════════ -->
+    <header class="hero" id="hero">
+        <div class="hero__inner">
+            <div class="hero__avatar-wrap">
+                <!-- Replace src with your own photo -->
+                <img class="hero__avatar" src="avatar.png" alt="Profile photo"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span class="hero__avatar-fallback" style="display:none;">👤</span>
+            </div>
+
+            <div class="hero__text">
+                <h1 class="hero__name">obfuscated_</h1>
+                <p class="hero__bio">
+                    Your friendly neighbourhood developer. My little corner of the internet with some handy tools I
+                    built for
+                    funsies.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════ TOOLS GRID ═══════════ -->
+    <main class="dashboard" id="dashboard">
+        <h2 class="dashboard__title">Toolbox</h2>
+
+        <div class="tools-grid">
+
+            <!-- Tool Card: GIF Spoofer -->
+            <button class="tool-card" id="card-gif" data-module="gif">
+                <span class="tool-card__icon">🖼️</span>
+                <h3 class="tool-card__name">GIF Spoofer</h3>
+                <p class="tool-card__desc">Convert any image into a static&nbsp;.gif file. Handy for Discord.</p>
+            </button>
+
+            <!-- Tool Card: Secret Encoder -->
+            <button class="tool-card" id="card-steg" data-module="steg">
+                <span class="tool-card__icon">🔐</span>
+                <h3 class="tool-card__name">Secret Encoder</h3>
+                <p class="tool-card__desc">Hide or reveal secret text inside images</p>
+            </button>
+
+        </div>
+    </main>
+
+    <!-- ═══════════ MODULE PANELS (hidden by default) ═══════════ -->
+
+    <!-- GIF Spoofer Panel -->
+    <section class="module-panel" id="panel-gif" aria-hidden="true">
+        <div class="module-panel__header">
+            <button class="module-panel__back" id="back-gif" aria-label="Back to dashboard">← Back</button>
+            <h2 class="module-panel__title">🖼️ GIF Spoofer</h2>
+        </div>
+
+        <div class="module-panel__body">
+            <div class="drop-zone" id="gif-drop">
+                <div class="drop-zone__content">
+                    <span class="drop-zone__icon">📂</span>
+                    <p class="drop-zone__label">Drag &amp; drop an image here</p>
+                    <p class="drop-zone__sub">or click to browse</p>
+                </div>
+                <input type="file" class="drop-zone__input" id="gif-file-input" accept="image/*" hidden>
+            </div>
+
+            <div class="gif-result" id="gif-result" style="display:none;">
+                <div class="gif-result__preview">
+                    <img id="gif-preview" alt="GIF preview">
+                </div>
+                <div class="gif-result__actions">
+                    <a id="gif-download" class="btn btn--primary" download="spoofed.gif">⬇ Download .gif</a>
+                    <a id="gif-open" class="btn btn--secondary" target="_blank" rel="noopener">↗ Open in new tab</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secret Encoder Panel -->
+    <section class="module-panel" id="panel-steg" aria-hidden="true">
+        <div class="module-panel__header">
+            <button class="module-panel__back" id="back-steg" aria-label="Back to dashboard">← Back</button>
+            <h2 class="module-panel__title">🔐 Secret Encoder</h2>
+        </div>
+
+        <div class="module-panel__body">
+            <!-- Sub-tabs: Encode / Decode -->
+            <div class="sub-tabs">
+                <button class="sub-tab sub-tab--active" data-subtab="encode">Encode</button>
+                <button class="sub-tab" data-subtab="decode">Decode</button>
+            </div>
+
+            <!-- Encode View -->
+            <div class="steg-view" id="steg-encode">
+                <div class="steg-upload">
+                    <div class="drop-zone drop-zone--sm" id="steg-encode-drop">
+                        <div class="drop-zone__content">
+                            <span class="drop-zone__icon">🖼️</span>
+                            <p class="drop-zone__label">Drop an image or click to upload</p>
+                            <p class="drop-zone__sub">or start with a blank canvas</p>
+                        </div>
+                        <input type="file" class="drop-zone__input" id="steg-encode-file" accept="image/*" hidden>
+                    </div>
+                    <button class="btn btn--ghost" id="steg-blank-canvas">Start blank canvas</button>
+                </div>
+
+                <div class="steg-encode-controls" id="steg-encode-controls" style="display:none;">
+                    <div class="steg-preview-wrap">
+                        <canvas id="steg-encode-canvas"></canvas>
+                    </div>
+                    <label class="steg-label" for="steg-message">Secret message</label>
+                    <textarea class="steg-textarea" id="steg-message" placeholder="Type your secret here…"
+                        rows="3"></textarea>
+                    <div class="steg-capacity">
+                        <span id="steg-char-count">0</span> chars used ·
+                        capacity: <span id="steg-capacity">0</span> chars
+                    </div>
+                    <button class="btn btn--primary btn--block" id="steg-encode-btn">🔒 Encode &amp; Download</button>
+                </div>
+            </div>
+
+            <!-- Decode View -->
+            <div class="steg-view" id="steg-decode" style="display:none;">
+                <div class="drop-zone drop-zone--sm" id="steg-decode-drop">
+                    <div class="drop-zone__content">
+                        <span class="drop-zone__icon">🔍</span>
+                        <p class="drop-zone__label">Drop an encoded image here</p>
+                        <p class="drop-zone__sub">or click to browse</p>
+                    </div>
+                    <input type="file" class="drop-zone__input" id="steg-decode-file" accept="image/png" hidden>
+                </div>
+
+                <div class="steg-decode-result" id="steg-decode-result" style="display:none;">
+                    <h4 class="steg-decode-result__title">🔓 Hidden message</h4>
+                    <pre class="steg-decode-result__text" id="steg-decoded-text"></pre>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════ TOAST ═══════════ -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ═══════════ SCRIPTS ═══════════ -->
+    <script src="gif-spoofer.js"></script>
+    <script src="secret-encoder.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
