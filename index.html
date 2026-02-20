@@ -18,8 +18,7 @@
     <header class="hero" id="hero">
         <div class="hero__inner">
             <div class="hero__avatar-wrap">
-                <!-- Replace src with your own photo -->
-                <img class="hero__avatar" src="avatar.png" alt="Profile photo"
+                <img class="hero__avatar" src="avatar.jpg" alt="Profile photo"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span class="hero__avatar-fallback" style="display:none;">👤</span>
             </div>
@@ -53,6 +52,13 @@
                 <span class="tool-card__icon">🔐</span>
                 <h3 class="tool-card__name">Secret Encoder</h3>
                 <p class="tool-card__desc">Hide or reveal secret text inside images</p>
+            </button>
+
+            <!-- Tool Card: Font Inspector -->
+            <button class="tool-card" id="card-font" data-module="font">
+                <span class="tool-card__icon">📋</span>
+                <h3 class="tool-card__name">Font Inspector</h3>
+                <p class="tool-card__desc">Paste rich text to instantly reveal its fonts &amp; styles</p>
             </button>
 
         </div>
@@ -152,12 +158,32 @@
         </div>
     </section>
 
+    <!-- Font Inspector Panel -->
+    <section class="module-panel" id="panel-font" aria-hidden="true">
+        <div class="module-panel__header">
+            <button class="module-panel__back" id="back-font" aria-label="Back to dashboard">← Back</button>
+            <h2 class="module-panel__title">📋 Font Inspector</h2>
+        </div>
+
+        <div class="module-panel__body">
+            <div class="font-inspector-wrap">
+                <div class="fi-paste-zone" id="font-paste-target" contenteditable="true" tabindex="0"></div>
+                <div class="fi-output" id="font-inspector-output">
+                    <p class="inspector-empty">Paste or type something above to inspect fonts.</p>
+                </div>
+                <button class="btn btn--secondary btn--sm fi-clear" id="font-clear-btn" style="display:none;">✕
+                    Clear</button>
+            </div>
+        </div>
+    </section>
+
     <!-- ═══════════ TOAST ═══════════ -->
     <div class="toast-container" id="toast-container"></div>
 
     <!-- ═══════════ SCRIPTS ═══════════ -->
     <script src="gif-spoofer.js"></script>
     <script src="secret-encoder.js"></script>
+    <script src="font-inspector.js"></script>
     <script src="app.js"></script>
 </body>
 

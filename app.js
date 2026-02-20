@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('#back-gif').addEventListener('click', () => closePanel('gif'));
     $('#back-steg').addEventListener('click', () => closePanel('steg'));
+    $('#back-font').addEventListener('click', () => closePanel('font'));
 
     /* ═══════════ GIF Spoofer ═══════════ */
     const gifResult = $('#gif-result');

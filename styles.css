@@ -558,3 +558,221 @@ textarea { font: inherit; }
     flex-direction: column;
   }
 }
+/* ═══════════════════════════════════════════
+   Font Inspector
+   ═══════════════════════════════════════════ */
+
+/* Paste Zone */
+.fi-paste-zone {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg-surface);
+    border: 2px dashed rgba(255, 255, 255, 0.12);
+    border-radius: var(--r-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    padding: 1.25rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    line-height: 1.6;
+    cursor: text;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 1.5rem;
+}
+
+.fi-paste-zone:focus {
+    border-color: var(--accent);
+    border-style: solid;
+    box-shadow: 0 0 0 4px var(--accent-glow);
+    background: var(--bg-card);
+}
+
+.fi-paste-zone:empty::before {
+    content: "📋 Click here, then paste rich text to inspect its fonts…";
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 0.95rem;
+}
+
+/* Output Layout */
+.fi-output {
+    min-height: 100px;
+}
+
+.inspector-empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.fi-clear {
+    margin-top: 1rem;
+}
+
+/* Badges */
+.source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 0.35rem 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.source-badge--rich {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+}
+
+.source-badge--plain {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.source-badge--error {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    color: #f87171;
+}
+
+/* Property Grid */
+.props-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.prop-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.prop-card:hover {
+    border-color: var(--border-glow);
+}
+
+.prop-card__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.prop-card__label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+
+.prop-card__value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Color Swatches */
+.color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+}
+
+.color-swatch-sm {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* Table for multiple spans */
+.spans-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--r-sm);
+    overflow-x: auto;
+}
+
+.spans-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.spans-table th {
+    padding: 0.85rem 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.spans-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+.spans-table tr:last-child td {
+    border-bottom: none;
+}
+
+.st-text {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.st-font {
+    color: var(--accent);
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    background: rgba(249, 168, 76, 0.1);
+    border-radius: 4px;
+}
+
+/* Small helper copy styles */
+.btn--sm {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+}
+
+.btn--success {
+    border-color: #4ade80 !important;
+    color: #4ade80 !important;
+    background: rgba(74, 222, 128, 0.1) !important;
+}
