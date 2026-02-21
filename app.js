@@ -1,5 +1,5 @@
 /**
- * App Shell — wires up dashboard navigation, drop-zones,
+ * App Shell — wires up sidebar navigation, drop-zones,
  * and connects the GIF Spoofer / Secret Encoder modules.
  */
 
@@ -61,30 +61,83 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* ═══════════ Dashboard → Panel Navigation ═══════════ */
+    /* ═══════════ Sidebar ↔ Panel Navigation ═══════════ */
+    const welcome = $('#welcome');
+    const panels = $$('.module-panel');
+    const toolBtns = $$('.sidebar__tool-btn');
+    let activePanel = null;
+
     function openPanel(id) {
+        // Hide welcome
+        welcome.style.display = 'none';
+
+        // Close any open panel
+        panels.forEach(p => {
+            p.classList.remove('module-panel--open');
+            p.setAttribute('aria-hidden', 'true');
+        });
+
+        // Open the target
         const panel = $(`#panel-${id}`);
         if (!panel) return;
         panel.classList.add('module-panel--open');
         panel.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        activePanel = id;
+
+        // Highlight sidebar button
+        toolBtns.forEach(b => b.classList.remove('active'));
+        const btn = $(`[data-module="${id}"]`);
+        if (btn) btn.classList.add('active');
+
+        // Lazy init GitHub profile
+        if (id === 'gh' && !window._ghLoaded) {
+            window._ghLoaded = true;
+            GitHubProfile.init('gh-profile-container');
+        }
+
+        // Close mobile sidebar if open
+        sidebar.classList.remove('sidebar--open');
     }
 
-    function closePanel(id) {
-        const panel = $(`#panel-${id}`);
-        if (!panel) return;
-        panel.classList.remove('module-panel--open');
-        panel.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+    function closePanel() {
+        panels.forEach(p => {
+            p.classList.remove('module-panel--open');
+            p.setAttribute('aria-hidden', 'true');
+        });
+        toolBtns.forEach(b => b.classList.remove('active'));
+        welcome.style.display = '';
+        activePanel = null;
     }
 
-    $$('.tool-card').forEach(card => {
-        card.addEventListener('click', () => openPanel(card.dataset.module));
+    toolBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mod = btn.dataset.module;
+            if (activePanel === mod) {
+                // Toggle off if clicking the same button
+                closePanel();
+            } else {
+                openPanel(mod);
+            }
+        });
     });
 
-    $('#back-gif').addEventListener('click', () => closePanel('gif'));
-    $('#back-steg').addEventListener('click', () => closePanel('steg'));
-    $('#back-font').addEventListener('click', () => closePanel('font'));
+    /* ═══════════ Mobile Sidebar Toggle ═══════════ */
+    const sidebar = $('#sidebar');
+    const sidebarToggle = $('#sidebar-toggle');
+
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar--open');
+    });
+
+    // Close sidebar on clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768 &&
+            sidebar.classList.contains('sidebar--open') &&
+            !sidebar.contains(e.target) &&
+            e.target !== sidebarToggle) {
+            sidebar.classList.remove('sidebar--open');
+        }
+    });
 
     /* ═══════════ GIF Spoofer ═══════════ */
     const gifResult = $('#gif-result');
@@ -181,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             a.download = 'encoded.png';
             a.click();
             setTimeout(() => URL.revokeObjectURL(url), 5000);
-            toast('Encoded image downloaded! 🔒');
+            toast('Encoded image downloaded!');
         } catch (err) {
             toast('Encode failed: ' + err.message);
         }
@@ -210,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = SecretEncoder.decode(canvas);
             stegDecodedText.textContent = text;
             stegDecodeResult.style.display = '';
-            toast('Message revealed! 🔓');
+            toast('Message revealed!');
         } catch (err) {
             stegDecodeResult.style.display = 'none';
             toast('Decode failed: ' + err.message);
@@ -218,4 +271,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     wireDropZone($('#steg-decode-drop'), $('#steg-decode-file'), handleStegDecodeFile);
+
+    /* ═══════════ Global Paste Handler ═══════════ */
+    document.addEventListener('paste', (e) => {
+        if (!activePanel) return;
+
+        // The Font Inspector has its own paste handlers, so we ignore it here
+        if (activePanel === 'font') return;
+
+        const items = e.clipboardData.items;
+        let imageFile = null;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image/') === 0) {
+                imageFile = items[i].getAsFile();
+                break;
+            }
+        }
+
+        if (!imageFile) return;
+
+        // Prevent default only if we found an image and we are handling it
+        e.preventDefault();
+
+        if (activePanel === 'gif') {
+            handleGifFile(imageFile);
+        } else if (activePanel === 'steg') {
+            const activeTabMatch = document.querySelector('.sub-tab--active');
+            if (activeTabMatch) {
+                const activeTab = activeTabMatch.dataset.subtab;
+                if (activeTab === 'encode') {
+                    handleStegEncodeFile(imageFile);
+                } else if (activeTab === 'decode') {
+                    handleStegDecodeFile(imageFile);
+                }
+            }
+        }
+    });
+
 });
