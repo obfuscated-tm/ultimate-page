@@ -36,8 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ═══════════ Generic drop-zone wiring ═══════════ */
     function wireDropZone(zoneEl, inputEl, onFile) {
-        zoneEl.addEventListener('click', () => inputEl.click());
-
         zoneEl.addEventListener('dragover', e => {
             e.preventDefault();
             zoneEl.classList.add('drop-zone--dragover');
