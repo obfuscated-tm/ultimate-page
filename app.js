@@ -9,6 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
     const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
+    function isImageFile(file) {
+        if (!file) return false;
+        if (file.type && file.type.startsWith('image/')) return true;
+        const name = file.name ? file.name.toLowerCase() : '';
+        return !!name.match(/\.(jpg|jpeg|png|gif|webp|heic|heif|bmp|svg)$/);
+    }
+
     function toast(msg) {
         const c = $('#toast-container');
         const el = document.createElement('div');
@@ -55,7 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
         inputEl.addEventListener('change', () => {
             const file = inputEl.files[0];
             if (file) onFile(file);
-            inputEl.value = '';
+        });
+
+        inputEl.addEventListener('click', (e) => {
+            e.target.value = '';
         });
     }
 
@@ -144,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gifOpen = $('#gif-open');
 
     async function handleGifFile(file) {
-        if (!file.type.startsWith('image/')) {
+        if (!isImageFile(file)) {
             toast('Please drop an image file.');
             return;
         }
@@ -186,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Upload image for encoding
     async function handleStegEncodeFile(file) {
-        if (!file.type.startsWith('image/')) { toast('Please drop an image file.'); return; }
+        if (!isImageFile(file)) { toast('Please drop an image file.'); return; }
         try {
             await loadFileToCanvas(file, stegCanvas);
             stegControls.style.display = '';
@@ -254,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stegDecodedText = $('#steg-decoded-text');
 
     async function handleStegDecodeFile(file) {
-        if (!file.type.startsWith('image/')) { toast('Please drop an image file.'); return; }
+        if (!isImageFile(file)) { toast('Please drop an image file.'); return; }
         try {
             const canvas = document.createElement('canvas');
             await loadFileToCanvas(file, canvas);
@@ -276,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let stencilObjectURL = null;
 
     function handleStencilFile(file) {
-        if (!file || !file.type.startsWith('image/')) {
+        if (!isImageFile(file)) {
             toast('Please drop an image file.');
             return;
         }
