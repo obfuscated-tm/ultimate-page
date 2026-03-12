@@ -48,16 +48,34 @@ const Stencil = (() => {
   }
 
   /* ── Sync a slider ↔ number-input pair ── */
-  function syncPair(slider, input, key, suffix, applyFn) {
-    const handle = () => {
+  function syncPair(slider, input, key, suffix, applyFn, isLogarithmic = false) {
+    const handleInput = () => {
       state[key] = Number(input.value);
-      slider.value = Math.min(Math.max(state[key], Number(slider.min)), Number(slider.max));
+      if (isLogarithmic) {
+        // Find what slider value maps to this scale mathematically
+        const minVal = Math.log10(1); 
+        const maxVal = Math.log10(500);
+        const targetVal = Math.log10(Math.max(1, Math.min(500, state[key])));
+        const range = maxVal - minVal;
+        slider.value = ((targetVal - minVal) / range) * 1000;
+      } else {
+        slider.value = Math.min(Math.max(state[key], Number(slider.min)), Number(slider.max));
+      }
       applyFn();
     };
-    input.addEventListener('input', handle);
+    
+    input.addEventListener('input', handleInput);
 
     slider.addEventListener('input', () => {
-      state[key] = Number(slider.value);
+      if (isLogarithmic) {
+        const minVal = Math.log10(1);
+        const maxVal = Math.log10(500);
+        const range = maxVal - minVal;
+        const normalized = Number(slider.value) / 1000; // slider goes 0-1000 internally
+        state[key] = Math.round(Math.pow(10, minVal + (range * normalized)));
+      } else {
+        state[key] = Number(slider.value);
+      }
       input.value = state[key];
       applyFn();
     });
@@ -87,7 +105,7 @@ const Stencil = (() => {
           <div class="stencil-toolbar__row">
             <div class="stencil-overlay__control">
               <label class="stencil-overlay__label" for="stencil-scale">Scale</label>
-              <input type="range" id="stencil-scale" class="stencil-overlay__slider" min="1" max="500" value="100" step="1">
+              <input type="range" id="stencil-scale" class="stencil-overlay__slider" min="0" max="1000" value="0" step="1">
               <input type="number" id="stencil-scale-input" class="stencil-overlay__num" value="100" min="1" max="9999" step="1">
               <span class="stencil-overlay__unit">%</span>
             </div>
@@ -151,7 +169,7 @@ const Stencil = (() => {
     yInput        = overlayEl.querySelector('#stencil-y-input');
 
     /* ── Wire slider ↔ input pairs ── */
-    syncPair(scaleSlider, scaleInput, 'scale', '%', updateTransform);
+    syncPair(scaleSlider, scaleInput, 'scale', '%', updateTransform, true); // Logarithmic slider
     syncPair(opacitySlider, opacityInput, 'opacity', '%', updateTransform);
     syncPair(xSlider, xInput, 'x', 'px', updateTransform);
     syncPair(ySlider, yInput, 'y', 'px', updateTransform);
@@ -253,7 +271,13 @@ const Stencil = (() => {
     // Reset state
     state = { scale: 100, opacity: 100, x: 0, y: 0, bgWhite: false, renderIdx: 0 };
 
-    scaleSlider.value = 100;   scaleInput.value = 100;
+    scaleInput.value = 100;
+    // Logarithmic slider initialization (maps 100 to the 0-1000 range)
+    const minVal = Math.log10(1); 
+    const maxVal = Math.log10(500);
+    const range = maxVal - minVal;
+    scaleSlider.value = ((Math.log10(100) - minVal) / range) * 1000;
+    
     opacitySlider.value = 100; opacityInput.value = 100;
     xSlider.value = 0;         xInput.value = 0;
     ySlider.value = 0;         yInput.value = 0;
