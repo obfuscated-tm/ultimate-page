@@ -1275,3 +1275,406 @@ textarea {
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+/* ═══════════════════════════════════════════
+   Stencil Tool
+   ═══════════════════════════════════════════ */
+
+.stencil-intro {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Preview Area */
+.stencil-preview-area {
+  margin-top: 1.5rem;
+  animation: fadeUp 0.35s var(--ease-out);
+}
+
+.stencil-preview-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 320px;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.stencil-preview-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-glow);
+}
+
+.stencil-preview-card__img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.stencil-fullscreen-btn svg {
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   Stencil Fullscreen Overlay
+   ═══════════════════════════════════════════ */
+
+.stencil-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+
+  /* Prevent ALL touch gestures — critical for mobile tracing */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+.stencil-overlay--open {
+  display: flex;
+}
+
+/* White-background mode — solid white */
+.stencil-overlay--white-bg {
+  background: #fff;
+}
+
+/* Image Container */
+.stencil-overlay__img-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  pointer-events: none;
+}
+
+.stencil-overlay__img {
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+
+/* ── Bottom Toolbar ── */
+.stencil-overlay__toolbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(15, 17, 23, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.3s var(--ease-out);
+}
+
+/* White-bg: toolbar stays dark */
+.stencil-overlay--white-bg .stencil-overlay__toolbar {
+  background: rgba(15, 17, 23, 0.95);
+}
+
+/* ── Collapse toggle chevron ── */
+.stencil-toolbar__collapse {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.stencil-toolbar__collapse:hover {
+  color: var(--text-primary);
+}
+
+.stencil-toolbar__collapse svg {
+  transition: transform 0.3s var(--ease-out);
+}
+
+/* When collapsed, rotate chevron to point up */
+.stencil-overlay__toolbar--collapsed .stencil-toolbar__collapse svg {
+  transform: rotate(180deg);
+}
+
+/* ── Toolbar body (collapsible content) ── */
+.stencil-toolbar__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 700px;
+  padding: 0 1.25rem 0.85rem;
+  overflow: hidden;
+  max-height: 500px;
+  transition: max-height 0.35s var(--ease-out), padding 0.35s var(--ease-out), opacity 0.25s;
+  opacity: 1;
+}
+
+.stencil-overlay__toolbar--collapsed .stencil-toolbar__body {
+  max-height: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Row layout ── */
+.stencil-toolbar__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.stencil-overlay__control {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.stencil-overlay__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  min-width: 46px;
+}
+
+/* Number input */
+.stencil-overlay__num {
+  width: 56px;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--accent);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  touch-action: auto;
+}
+
+.stencil-overlay__num::-webkit-inner-spin-button,
+.stencil-overlay__num::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stencil-overlay__num:focus {
+  border-color: var(--accent);
+  background: rgba(249, 168, 76, 0.08);
+}
+
+.stencil-overlay__unit {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 16px;
+}
+
+/* Custom Range Slider */
+.stencil-overlay__slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  min-width: 60px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  cursor: pointer;
+  touch-action: auto; /* allow slider interaction */
+}
+
+.stencil-overlay__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.stencil-overlay__slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+  cursor: grabbing;
+  box-shadow: 0 0 16px var(--accent-glow), 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.stencil-overlay__slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.stencil-overlay__slider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Pill Toggle Buttons (BG toggle, Fit toggle) ── */
+.stencil-overlay__pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.stencil-overlay__pill-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--text-secondary);
+}
+
+.stencil-overlay__pill-toggle--active {
+  background: rgba(249, 168, 76, 0.12);
+  border-color: rgba(249, 168, 76, 0.3);
+  color: var(--accent);
+}
+
+.stencil-overlay__pill-toggle--active:hover {
+  background: rgba(249, 168, 76, 0.18);
+}
+
+.stencil-pill__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.stencil-pill__text {
+  white-space: nowrap;
+}
+
+/* ── Close Button ── */
+.stencil-overlay__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.stencil-overlay__close:hover {
+  background: rgba(248, 113, 113, 0.2);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(248, 113, 113, 0.2);
+}
+
+.stencil-overlay__close:active {
+  transform: scale(0.95);
+}
+
+/* White-bg mode: make close button visible */
+.stencil-overlay--white-bg .stencil-overlay__close {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #333;
+}
+
+.stencil-overlay--white-bg .stencil-overlay__close:hover {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #dc2626;
+}
+
+/* ── Responsive: stack toolbar on small screens ── */
+@media (max-width: 600px) {
+  .stencil-toolbar__row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .stencil-overlay__control {
+    min-width: 120px;
+  }
+
+  .stencil-toolbar__body {
+    padding: 0 0.85rem 0.75rem;
+  }
+
+  .stencil-overlay__slider {
+    min-width: 40px;
+  }
+
+  .stencil-overlay__label {
+    min-width: 40px;
+    font-size: 0.68rem;
+  }
+
+  .stencil-overlay__num {
+    width: 50px;
+    font-size: 0.75rem;
+  }
+}

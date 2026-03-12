@@ -272,6 +272,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     wireDropZone($('#steg-decode-drop'), $('#steg-decode-file'), handleStegDecodeFile);
 
+    /* ═══════════ Stencil ═══════════ */
+    const stencilPreviewArea = $('#stencil-preview-area');
+    const stencilPreviewImg = $('#stencil-preview-img');
+    let stencilObjectURL = null;
+
+    function handleStencilFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+            toast('Please drop an image file.');
+            return;
+        }
+        // Revoke previous preview URL
+        if (stencilObjectURL) {
+            URL.revokeObjectURL(stencilObjectURL);
+        }
+        stencilObjectURL = URL.createObjectURL(file);
+        stencilPreviewImg.src = stencilObjectURL;
+        stencilPreviewArea.style.display = '';
+        toast('Image loaded — tap the button to go fullscreen!');
+    }
+
+    wireDropZone($('#stencil-drop'), $('#stencil-file-input'), handleStencilFile);
+
+    // Fullscreen button
+    $('#stencil-fullscreen-btn').addEventListener('click', () => {
+        if (!stencilPreviewImg.src) {
+            toast('Load an image first.');
+            return;
+        }
+        Stencil.open(stencilPreviewImg.src);
+    });
+
     /* ═══════════ Global Paste Handler ═══════════ */
     document.addEventListener('paste', (e) => {
         if (!activePanel) return;
@@ -305,6 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     handleStegDecodeFile(imageFile);
                 }
             }
+        } else if (activePanel === 'stencil') {
+            handleStencilFile(imageFile);
         }
     });
 

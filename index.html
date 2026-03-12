@@ -47,6 +47,10 @@
                     <span class="sidebar__tool-name">Font Inspector</span>
                     <span class="sidebar__tool-desc">Inspect pasted fonts</span>
                 </button>
+                <button class="sidebar__tool-btn" id="card-stencil" data-module="stencil">
+                    <span class="sidebar__tool-name">Stencil</span>
+                    <span class="sidebar__tool-desc">Trace over images</span>
+                </button>
             </div>
 
             <!-- GitHub Profile Section -->
@@ -207,6 +211,36 @@
                 </div>
             </section>
 
+            <!-- Stencil Panel -->
+            <section class="module-panel" id="panel-stencil" aria-hidden="true">
+                <div class="module-panel__header">
+                    <h2 class="module-panel__title">Stencil</h2>
+                </div>
+
+                <div class="module-panel__body">
+                    <p class="stencil-intro">Upload or paste an image to use as a tracing stencil. The image opens as a fullscreen overlay with adjustable scale and opacity — perfect for tracing on tablets and phones.</p>
+
+                    <div class="drop-zone" id="stencil-drop">
+                        <div class="drop-zone__content">
+                            <span class="drop-zone__icon">✏️</span>
+                            <p class="drop-zone__label">Drag & drop or paste an image</p>
+                            <p class="drop-zone__sub">or click to browse</p>
+                        </div>
+                        <input type="file" class="drop-zone__input" id="stencil-file-input" accept="image/*" hidden>
+                    </div>
+
+                    <div class="stencil-preview-area" id="stencil-preview-area" style="display:none;">
+                        <div class="stencil-preview-card">
+                            <img id="stencil-preview-img" class="stencil-preview-card__img" alt="Stencil preview">
+                        </div>
+                        <button class="btn btn--primary btn--block stencil-fullscreen-btn" id="stencil-fullscreen-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                            Open Fullscreen Stencil
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- GitHub Profile Panel -->
             <section class="module-panel" id="panel-gh" aria-hidden="true">
                 <div class="module-panel__header">
@@ -232,6 +266,7 @@
     <script src="secret-encoder.js"></script>
     <script src="font-inspector.js"></script>
     <script src="github-profile.js"></script>
+    <script src="stencil.js"></script>
     <script src="app.js"></script>
 </body>
 
